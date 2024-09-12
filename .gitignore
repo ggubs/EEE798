@@ -167,3 +167,6 @@ cython_debug/
 # general
 .pdf
 .zip
+
+# don't include the course text
+van_trees/
