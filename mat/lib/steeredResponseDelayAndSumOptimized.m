@@ -1,4 +1,4 @@
-function [S, u, v, w, R, e] = steeredResponseDelayAndSumOptimized(xPos, yPos, zPos, elementWeights, inputSignal, f, c, thetaScanningAngles, phiScanningAngles)
+function [S, u, v, w, R, e] = steeredResponseDelayAndSumOptimized(px, py, pz, w_n, signal, lambda, theta_scanning, phi_scanning)
 %steeredResponseDelayAndSum - calculate delay and sum in frequency domain
 %
 %Calculates the steered response from the delay-and-sum algorithm in the
@@ -27,22 +27,12 @@ function [S, u, v, w, R, e] = steeredResponseDelayAndSumOptimized(xPos, yPos, zP
 %Created by J?rgen Grythe
 %Last updated 2017-02-27
 
-
-if ~exist('thetaScanningAngles', 'var')
-    thetaScanningAngles = -90:90;
-end
-
-if ~exist('phiScanningAngles', 'var')
-    phiScanningAngles = 0:180;
-end
-
-
 %Calculate steering vector for all scanning angles
-[e, u, v, w] = steeringVector(xPos, yPos, zPos, f, c, thetaScanningAngles, phiScanningAngles);
+[e, u, v, w] = steeringVector(px, py, pz, lambda, theta_scanning, phi_scanning);
 
 %Calculate correlation matrix
-inputSignal = diag(elementWeights)*inputSignal;
-R = inputSignal*inputSignal';
+signal = diag(w_n)*signal;
+R = signal*signal';
 
 
 %M # of y-points, N # of x-points, P number of mics

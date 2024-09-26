@@ -24,14 +24,14 @@ d = lambda/2;
 px = ((0:(N-1))-((N-1)/2))*d; % ULA
 py = zeros(1, numel(px));
 pz = zeros(1, numel(px));
-w = ones(1, numel(px))/numel(px);
+w_n = ones(1, numel(px))/numel(px);
 
 % synthesize signal incident to array
-signal = createSignal(px, py, pz, f, c, fs, theta_incident, phi_incident, a, nSamps);
+signal = createSignal(px, py, pz, lambda, fs, theta_incident, phi_incident, a, nSamps);
 
 % calculate array response to the incident waveform at desired scanning
 % angles
-S(:) = steeredResponseDelayAndSumOptimized(px, py, pz, w, signal, f, c, theta_scanning, phi_scanning);
+S(:) = steeredResponseDelayAndSumOptimized(px, py, pz, w_n, signal, lambda, theta_scanning, phi_scanning);
 
 % normalize the beampattern
 S(:) = abs(S(:))/max(abs(S(:))); %normalisation
