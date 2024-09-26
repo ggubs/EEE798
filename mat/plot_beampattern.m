@@ -13,8 +13,8 @@ nSamps = fs*integration_time;
 
 % received signal specification
 f = 100e6;
-theta_incident = 20; % degrees
-phi_incident = 0;
+theta_incident = 0; % degrees
+phi_incident = 90;
 a = 0; % db
 lambda = c/f;
 
@@ -31,19 +31,26 @@ signal = createSignal(px, py, pz, lambda, fs, theta_incident, phi_incident, a, n
 
 % calculate array response to the incident waveform at desired scanning
 % angles
-S(:) = steeredResponseDelayAndSumOptimized(px, py, pz, w_n, signal, lambda, theta_scanning, phi_scanning);
+S = steeredResponseDelayAndSumOptimized(px, py, pz, w_n, signal, lambda, theta_scanning, phi_scanning);
 
 % normalize the beampattern
-S(:) = abs(S(:))/max(abs(S(:))); %normalisation
+S = abs(S(:))/max(abs(S(:))); 
 
 % plot the result
+figure(1)
 plot(theta_scanning,20*log10(S(:)))
+title('Beampattern(DOA)');
+xlabel('\theta'); ylabel('dB'); 
 grid on
-xlabel('\theta'); ylabel('dB');
-title('Beampattern(DOA)')
 
 % find vector index corresponding to signal aoa and plot that too
 idx = find(theta_scanning >= theta_incident,1); 
 line([theta_scanning(idx) theta_scanning(idx)],get(gca,'YLim'),'LineStyle','--');
-
 legend('Array Response', 'AoA')
+
+% ploy array geometry
+figure(2)
+scatter3(px,py,pz)
+title('Array Geometry')
+xlabel('x (m'); ylabel('y (m'); zlabel('z (m')
+grid on
