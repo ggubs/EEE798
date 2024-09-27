@@ -13,8 +13,8 @@ nSamps = fs*integration_time;
 
 % received signal specification
 f = 100e6;
-theta_incident = 0; % degrees
-phi_incident = 90;
+theta_incident = 20; % degrees
+phi_incident = 15;
 a = 0; % db
 lambda = c/f;
 
@@ -48,9 +48,17 @@ idx = find(theta_scanning >= theta_incident,1);
 line([theta_scanning(idx) theta_scanning(idx)],get(gca,'YLim'),'LineStyle','--');
 legend('Array Response', 'AoA')
 
-% ploy array geometry
+% plot array geometry and incident wave
+[wx, wy, wz] = sph2cart(theta_incident,phi_incident,d*N);
+
 figure(2)
 scatter3(px,py,pz)
+hold on
+%plot3([0, wx], [0 wy], [0 wz])
+p0 = [wx, wy, wz];
+p1 = [0, 0, 0];
+vectarrow(p0, p1)
+hold off
 title('Array Geometry')
 xlabel('x (m'); ylabel('y (m'); zlabel('z (m')
 grid on

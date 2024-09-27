@@ -1,12 +1,15 @@
 % Generate an array manifold vector for uniformly weightedm isotropic 
 % antenna elements of arbitrary geometry
 clc; clear; close all; addpath(genpath('lib'));
-
+et 1000 wavelengths worth of signal
 % wavelength
 lambda = 1;
 
 % spacing factor
 d = lambda/2;
+
+% integration time
+T = 1e3*(lambda)^-1; % integrate over 1000 wavelengths 
 
 % array geometry
 p = [

@@ -1,4 +1,4 @@
-function [e, u, v, w] = steeringVector(px, py, pz, lambda, theta_scanning, phi_scanning)
+function [e, uh, vh, wh] = steeringVector(px, py, pz, lambda, theta, phi)
 %steeringVector - calculate steering vector of array
 %
 %Calculates the steering vector for different scanning angles
@@ -25,27 +25,51 @@ function [e, u, v, w] = steeringVector(px, py, pz, lambda, theta_scanning, phi_s
 %Created by J?rgen Grythe
 %Last updated 2017-02-27
 
+if ~isscalar(phi)
+    error(['Phi must be a scalar. This function only generates a response for' ...
+        'a single elevation angle. Loop over the function to generate a response ' ...
+        'in 3-dimensions.'])
+end
+
 %Convert angles to radians
-theta_scanning = theta_scanning*pi/180;
-phi_scanning = phi_scanning*pi/180;
+theta = theta*pi/180;
+phi = phi*pi/180;
 
 %Wavenumber
 k = 2*pi/lambda;
 
 %Number of elements/sensors in the array
-P = numel(px);
+N = numel(px);
 
 %Calculating wave vector in spherical coordinates
-N = numel(phi_scanning);
-
-u = sin(theta_scanning)'*cos(phi_scanning);
-v = sin(theta_scanning)'*sin(phi_scanning);
-w = repmat(cos(theta_scanning)', 1, N);
+uh = sin(theta)'*cos(phi);
+vh = sin(theta)'*sin(phi);
+wh = cos(theta)';
 
 %Calculate steering vector/matrix
-uu = bsxfun(@times, u, reshape(px, 1, 1, P));
-vv = bsxfun(@times, v, reshape(py, 1, 1, P));
-ww = bsxfun(@times, w, reshape(pz, 1, 1, P));
+uu = bsxfun(@times, uh, reshape(px, 1, 1, N));
+vv = bsxfun(@times, vh, reshape(py, 1, 1, N));
+ww = bsxfun(@times, wh, reshape(pz, 1, 1, N));
 
 e = exp(1j*k*(uu + vv + ww));
 
+
+% calculate the wave vectors for the given angles
+u = [sin(theta)'*cos(phi),...
+    sin(theta)'*sin(phi),...
+    cos(theta)'].';
+
+k = (-2*pi/lambda) * u;
+p = [px;py;pz];
+
+% calculate the array response at each wave vector
+nAngles = length(theta);
+wtn = zeros(N, nAngles);
+
+for idx = 1:nAngles
+    wtn(:,idx) = (k(:,idx).'*p).';
+end
+
+v = exp(1j*k*(sum(wtn,1)));
+
+keyboard

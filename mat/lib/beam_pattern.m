@@ -1,4 +1,4 @@
-function B = beam_pattern(theta, phi, p, w, lambda)
+function B = beam_pattern(theta, phi, p, w, lambda, T)
 %ARRAY_MANIFOLD: Calculate the array manifold vector of a given array
 %geometry for a given plane wave.
 %
@@ -25,6 +25,9 @@ function B = beam_pattern(theta, phi, p, w, lambda)
 % Number of antenna elements
 N = size(p,1);
 
+theta = theta*pi/180;
+phi = phi*pi/180;
+
 % 2.15
 a = [-sin(theta) .* cos(phi); ...
     -sin(theta) .* sin(phi); ...
@@ -41,6 +44,13 @@ wT_n = k.' * p;
 
 % 2.28 - array manifold vector
 v_k = exp( -1j * wT_n);
+
+% Arbitrary signal response
+fc = physconst('lightspeed')/lambda; %carrier
+fs = 2*fc; %assume nyquist
+t = 0:1/fs:T-1/fs;
+
+signal = 10^(a/20)*exp(1j*2*pi*fc*t);
 
 % 2.32
 H_t = (1/N)*v_k';
