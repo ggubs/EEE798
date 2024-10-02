@@ -1,4 +1,4 @@
-function [v] = manifoldVector(p, lambda, theta, phi)
+function v = manifoldVector(p, lambda, theta, phi)
 %
 %IN
 %p               - Nx3 vector of positions [m] where N is the number of array elements
@@ -47,6 +47,7 @@ for idx = 1:nTheta
     wtn(idx,:) = k(idx,:)*p;
 end
 
-% generate the array response vector
+% generate the array manifold vector
+% 2.28
 v = exp(1j*wtn.');
 

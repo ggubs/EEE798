@@ -56,7 +56,7 @@ function vectarrow(p0,p1)
           
           p = p1-p0;
           alpha = 0.1;  % Size of arrow head relative to the length of the vector
-          beta = 0.5;  % Width of the base of the arrow head relative to the length
+          beta = 0.1;  % Width of the base of the arrow head relative to the length
           
           hu = [x1-alpha*(p(1)+beta*(p(2)+eps)); x1; x1-alpha*(p(1)-beta*(p(2)+eps))];
           hv = [y1-alpha*(p(2)-beta*(p(1)+eps)); y1; y1-alpha*(p(2)+beta*(p(1)+eps))];
