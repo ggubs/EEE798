@@ -6,6 +6,10 @@ __pycache__/
 # C extensions
 *.so
 
+# Autosaves / backups
+*.asv
+*.bak
+
 # Distribution / packaging
 .Python
 build/
