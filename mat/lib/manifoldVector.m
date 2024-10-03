@@ -8,6 +8,10 @@ function v = manifoldVector(p, lambda, theta, phi)
 %
 %OUT
 %v               - the array manifold vector (or the steering vector)
+%
+%REFERENCES
+%Optimum Array Processing, (Van Trees, 2022)
+%
 
 if ~isscalar(phi)
     error(['Phi must be a scalar. This function only generates a response for' ...

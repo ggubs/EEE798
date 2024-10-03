@@ -10,6 +10,10 @@ function B = arrayResponse(p, w_n, v_k, lambda, theta_scanning, phi_scanning)
 %
 %OUT
 %B                   - 1xM beam pattern response for the given manifold
+%
+%REFERENCES
+%Optimum Array Processing, (Van Trees, 2022)
+%
 
 % calculate steering vector for all scanning angles
 W = manifoldVector(p, lambda, theta_scanning, phi_scanning);
