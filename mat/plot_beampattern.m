@@ -41,7 +41,7 @@ p = [px; py; pz];
 w_n = ones(1, numel(px))/numel(p)/3;
 
 %% Computation
-% synthesize signal incident to array
+% synthesize manifold vector for incident to array
 v_k = manifoldVector(p, lambda, theta_incident, phi_incident);
 
 % calculate array response to the incident waveform at desired scanning
