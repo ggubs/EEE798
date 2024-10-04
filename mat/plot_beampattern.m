@@ -18,17 +18,21 @@ f = 100e6;
 lambda = c/f;
 a = 0; % db
 
-
 % array specification
+ULA = 1;
+
 N = 11;
 d = lambda/2;
-% px = ((0:(N-1))-((N-1)/2))*d; % ULA
-% py = zeros(1, numel(px));
-% pz = zeros(1, numel(px));
 
-px = 4*d*[1 1 -1 -1];
-py = 4*d*[1 -1 1 -1];
-pz = zeros(1,numel(px));
+if ULA
+    % Construct a uniform linear array with lamda/2 spacing
+    px = ((0:(N-1))-((N-1)/2))*d; % ULA
+    py = zeros(1, numel(px));
+else
+    % Construct a circular array with 0.6lamda radius
+    [px, py] = pol2cart(linspace(0,2*pi-2*pi/N,N),ones(1,N)*2*0.6*d);
+end
+pz = zeros(1, numel(px));
 
 % create element position matrix
 p = [px; py; pz];
@@ -44,12 +48,14 @@ v_k = manifoldVector(p, lambda, theta_incident, phi_incident);
 % angles
 B = zeros(length(theta_scanning), length(phi_scanning));
 
-% compute the response at each elevation angle
+%%% THIS IS WHERE THE MAGIC HAPPENS %%%
+% compute the response at each elevation angle. The function accepts theta
+% (azimuth) as a vector, but only accepts scalar values for phi (elevation).
 for t = 1:length(phi_scanning)
     B(:,t) = arrayResponse(p, w_n, v_k, lambda, theta_scanning, phi_scanning(t));
 end
 
-% normalize the beampattern
+% normalize the beampattern for plotting
 B = abs(B)/max(abs(B(:)));
 
 %% Plotting
@@ -77,12 +83,11 @@ if plots
     title('Array Geometry w/ incident wavenumber')
     subtitle(['\theta = ' num2str(theta_incident), ', \phi = ' num2str(phi_incident)])
     xlabel('x [m]'); ylabel('y [m]'); zlabel('z [m]')
-    grid on
-    hold off
 
     % plot 3d beam pattern response
     figure(3)
     plot3Dpattern(B.',theta_scanning,phi_scanning)
     title('3D Array response for a given wavenumber')
     subtitle(['\theta = ' num2str(theta_incident), ', \phi = ' num2str(phi_incident)])
+    xlabel('x [m]'); ylabel('y [m]'); zlabel('z [m]')
 end

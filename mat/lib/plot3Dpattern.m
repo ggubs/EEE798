@@ -1,41 +1,40 @@
-function plot3Dpattern(MagE1, theta1, phi1)
+function plot3Dpattern(B1, theta1, phi1)
 %PLOT3DPATTERN Summary of this function goes here
-%   Detailed explanation goes here
+
+% Shift the beampattern to the origin
+[theta_grid,phi_grid] = meshgrid(theta1, phi1);
+B = reshape(B1,length(phi1),length(theta1));
+B_shifted = B - min(B(:));
+
 ax = axes();
 hold on
-add_x_y_z_labels(ax);
-add_az_el_labels(ax);
-draw_circle(ax, 90, 1:1:360,'--mw-graphics-colorSpace-rgb-blue','XY_Circle',1.1); % Circle in the x-y plane
-draw_circle(ax, 1:1:360, 0,'--mw-graphics-colorSpace-rgb-green','XZ_Circle',1.1); % Circle in the x-z plane
-draw_circle(ax, 1:1:360,90, '--mw-graphics-colorSpace-rgb-red','YZ_Circle',1.1); % Circle in the y-z plane
-draw_3d_plot(ax,MagE1,theta1,phi1);
+add_x_y_z_labels(ax,max(B(:)));
+add_az_el_labels(ax,max(B(:)));
+draw_circle(ax, 90, 1:1:360,'--mw-graphics-colorSpace-rgb-blue','XY',1.1*max(B(:))); % Circle in the x-y plane
+draw_circle(ax, 1:1:360, 0,'--mw-graphics-colorSpace-rgb-green','XZ',1.1*max(B(:))); % Circle in the x-z plane
+draw_circle(ax, 1:1:360,90, '--mw-graphics-colorSpace-rgb-red','YZ',1.1*max(B(:))); % Circle in the y-z plane
 
+% Spherical to cartesian
+BZ  = B_shifted./max(max(B_shifted)).*cosd(theta_grid);
+BX  = B_shifted./max(max(B_shifted)).*sind(theta_grid).*cosd(phi_grid);
+BY  = B_shifted./max(max(B_shifted)).*sind(theta_grid).*sind(phi_grid);
 
-    function draw_3d_plot(axes1, B1,theta1,phi1)
+% Plot surface
+surf(ax,BX,BY,BZ,B, 'FaceColor','interp','LineStyle','none','FaceAlpha',1.0,'Tag','3D polar plot');
 
-        [theta,phi] = meshgrid(theta1, phi1);
-        B = reshape(B1,length(phi1),length(theta1));
-        r = B - min(B(:));
+%cleanup
+axis(ax,'vis3d');
+axis(ax,'equal');
+axis(ax,'off');
+colormap(ax,jet(256));
+colorbar
+hold off
 
-        % Spherical to cartesian
-        Z  = r./max(max(r)).*cosd(theta);
-        X  = r./max(max(r)).*sind(theta).*cosd(phi);
-        Y  = r./max(max(r)).*sind(theta).*sind(phi);
-
-        % Plot surface
-        surf(axes1,X,Y,Z,B, 'FaceColor','interp','LineStyle','none','FaceAlpha',1.0,'Tag','3D polar plot');
-        axis(axes1,'vis3d');
-        axis(axes1,'equal');
-        axis(axes1,'off');
-        colormap(axes1,jet(256));
-    end
-
-    function add_x_y_z_labels(axes1)
+    function add_x_y_z_labels(axes1, rad)
         % Create pseudo-axes and x/y/z mark ticks
-        r = 1.2;
-        XPos = r;
-        YPos = r;
-        ZPos = r;
+        XPos = rad;
+        YPos = rad;
+        ZPos = rad;
 
         plot3( axes1, [0,XPos],[0,0],[0,0],'r','LineWidth',1.5 );
         text(axes1,1.1*XPos,0,0, 'x');
@@ -47,11 +46,11 @@ draw_3d_plot(ax,MagE1,theta1,phi1);
         text(axes1,0,0,1.05*ZPos, 'z');
     end
 
-    function add_az_el_labels(axes1)
+    function add_az_el_labels(axes1, rad)
         % Display azimuth/elevation
 
         % Create arrows to show azimuth and elevation variation
-        XPos = 1.15;
+        XPos = rad;
         draw_arrow(axes1,[XPos 0],[XPos 0.1],1.5,0,'xy');
         text(axes1,1.2,0.12,0.0, texlabel('az'));
         draw_arrow(axes1,[XPos 0],[XPos 0.1],1.5,0, 'xz');
@@ -84,18 +83,18 @@ draw_3d_plot(ax,MagE1,theta1,phi1);
 
     end% of draw arrow
 
-    function draw_circle (axes1, theta, phi, color, Tag, r)
+    function draw_circle (axes1, theta, phi, color, Tag, rad)
         import matlab.graphics.internal.themes.specifyThemePropertyMappings
         [theta,phi] = meshgrid(theta, phi);
 
         % Spherical to cartesian
-        Z  = r./max(max(r)).*cosd(theta);
-        X  = r./max(max(r)).*sind(theta).*cosd(phi);
-        Y  = r./max(max(r)).*sind(theta).*sind(phi);
+        Z  = rad./max(max(rad)).*cosd(theta);
+        X  = rad./max(max(rad)).*sind(theta).*cosd(phi);
+        Y  = rad./max(max(rad)).*sind(theta).*sind(phi);
 
         p = plot3(axes1,X,Y,Z,'LineWidth',2,'Tag',Tag);
         specifyThemePropertyMappings(p,'Color',color);
 
-    end 
+    end
 end
 
