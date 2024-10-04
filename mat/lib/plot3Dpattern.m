@@ -7,6 +7,7 @@ B = reshape(B1,length(phi1),length(theta1));
 B_shifted = B - min(B(:));
 
 ax = axes();
+daspect([1 1 1])
 hold on
 add_x_y_z_labels(ax,max(B(:)));
 add_az_el_labels(ax,max(B(:)));
@@ -30,6 +31,11 @@ colormap(ax,jet(256));
 colorbar
 hold off
 
+% rescale plot
+axScale = 1.02;
+arrRad = max(B_shifted(:));
+xlim([-axScale*arrRad axScale*arrRad]); ylim([-axScale*arrRad axScale*arrRad]); zlim([-axScale*arrRad axScale*arrRad]);
+
     function add_x_y_z_labels(axes1, rad)
         % Create pseudo-axes and x/y/z mark ticks
         XPos = rad;
@@ -50,38 +56,18 @@ hold off
         % Display azimuth/elevation
 
         % Create arrows to show azimuth and elevation variation
-        XPos = rad;
-        draw_arrow(axes1,[XPos 0],[XPos 0.1],1.5,0,'xy');
-        text(axes1,1.2,0.12,0.0, texlabel('az'));
-        draw_arrow(axes1,[XPos 0],[XPos 0.1],1.5,0, 'xz');
-        text(axes1,1.2,-0.025,0.15, texlabel('el'));
+        az_arrow_start = [rad, 0, 0];
+        az_arrow_end = [rad, 0.2*rad, 0];
+
+        el_arrow_start = [rad, 0, 0];
+        el_arrow_end = [rad, 0, 0.2*rad,];
+
+        arrow3(az_arrow_start, az_arrow_end, 'k-3');
+        text(axes1,rad*1.02,rad*0.12,0.0, texlabel('az'));
+
+        arrow3(el_arrow_start, el_arrow_end,'k-3');
+        text(axes1,rad*1.02,rad*0.025,rad*0.15, texlabel('el'));
     end% of add_az_el_labels
-
-    function draw_arrow(axes1,startpoint,endpoint,headsize, offset, plane)
-
-        v1 = headsize*(startpoint-endpoint)/2.5;
-
-        theta      = 22.5*pi/180;
-        theta2     = -1*22.5*pi/180;
-        rotMatrix  = [cos(theta) -sin(theta) ; sin(theta) cos(theta)];
-        rotMatrix1 = [cos(theta2) -sin(theta2) ; sin(theta2) cos(theta2)];
-
-        v2 = v1*rotMatrix;
-        v3 = v1*rotMatrix1;
-        x1 = endpoint;
-        x2 = x1 + v2;
-        x3 = x1 + v3;
-        if strcmpi(plane, 'xy')
-            fill3(axes1,[x1(1) x2(1) x3(1)],[x1(2) x2(2) x3(2)],[offset offset offset],'k');
-            plot3(axes1,[startpoint(1) endpoint(1)],[startpoint(2) endpoint(2)],      ...
-                [offset offset],'linewidth',1.5,'color','k');
-        elseif strcmpi(plane,'xz')
-            fill3(axes1,[x1(1) x2(1) x3(1)],[offset offset offset],[x1(2) x2(2) x3(2)],'k');
-            plot3(axes1,[startpoint(1) endpoint(1)],[offset offset],                  ...
-                [startpoint(2) endpoint(2)],'linewidth',1.5,'color','k');
-        end
-
-    end% of draw arrow
 
     function draw_circle (axes1, theta, phi, color, Tag, rad)
         import matlab.graphics.internal.themes.specifyThemePropertyMappings

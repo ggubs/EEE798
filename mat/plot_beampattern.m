@@ -19,7 +19,7 @@ lambda = c/f;
 a = 0; % db
 
 % array specification
-ULA = 1;
+ULA = 0;
 
 N = 11;
 d = lambda/2;
@@ -58,7 +58,7 @@ end
 % normalize the beampattern for plotting
 B = abs(B)/max(abs(B(:)));
 
-%% Plotting
+%% Plotting - these functions are kind of a mess internally but they work OK
 % plot the result at the proper elevation angle
 if plots
 
