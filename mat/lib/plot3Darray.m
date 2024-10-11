@@ -1,4 +1,4 @@
-function plot3Darray(pos, arrRad, theta_inc, phi_inc)
+function plot3Darray(pos, arrRad, theta_inc, phi_inc, arrow_height, arrow_width)
 %PLOT3DPATTERN Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -8,7 +8,7 @@ ax = axes();
 daspect([1 1 1])
 hold on
 add_x_y_z_labels(ax, arrRad);
-add_az_el_labels(ax, arrRad);
+add_az_el_labels(ax, arrRad, arrow_height, arrow_width);
 draw_circle(ax, 90, 1:1:360,'--mw-graphics-colorSpace-rgb-blue','XY_Circle',arrRad); % Circle in the x-y plane
 draw_circle(ax, 1:1:360, 0,'--mw-graphics-colorSpace-rgb-green','XZ_Circle',arrRad); % Circle in the x-z plane
 draw_circle(ax, 1:1:360,90, '--mw-graphics-colorSpace-rgb-red','YZ_Circle',arrRad); % Circle in the y-z plane
@@ -26,12 +26,9 @@ Z_INC  = arrRad.*cosd(theta_inc);
 X_INC  = arrRad.*sind(theta_inc).*cosd(phi_inc);
 Y_INC  = arrRad.*sind(theta_inc).*sind(phi_inc);
 % startpoint, endpoint, color switch, arrow width, arrow height
-arrow3([X_INC,Y_INC,Z_INC], [0,0,0], 'f-5', arrRad/7, arrRad/5); % from file exchange
+arrow3([X_INC,Y_INC,Z_INC], [0,0,0], 'm-5', arrow_width, arrow_height); % from file exchange
 axScale = 1.02;
 xlim([-axScale*arrRad axScale*arrRad]); ylim([-axScale*arrRad axScale*arrRad]); zlim([-axScale*arrRad axScale*arrRad]);
-
-
-hold off
 
 
 %%% HELPER FUNCTIONS (Stolen and edited from some matlab internals)
@@ -47,7 +44,7 @@ hold off
         text(axes1,0,0,1.08*rad, 'z');
     end
 
-    function add_az_el_labels(axes1, rad)
+    function add_az_el_labels(axes1, rad, h, w)
         % Display azimuth/elevation
 
         % Create arrows to show azimuth and elevation variation
@@ -57,10 +54,10 @@ hold off
         el_arrow_start = [rad, 0, 0];
         el_arrow_end = [rad, 0, 0.2*rad,];
 
-        arrow3(az_arrow_start, az_arrow_end, 'k-3', rad/16);
+        arrow3(az_arrow_start, az_arrow_end, 'k-3', h/2, w);
         text(axes1,rad*1.02,rad*0.12,0.0, texlabel('az'));
 
-        arrow3(el_arrow_start, el_arrow_end,'k-3', rad/16);
+        arrow3(el_arrow_start, el_arrow_end,'k-3', h/2, w);
         text(axes1,rad*1.02,rad*0.025,rad*0.15, texlabel('el'));
     end% of add_az_el_labels
 
