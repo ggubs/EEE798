@@ -19,7 +19,8 @@ scatter3(pos(1,:),pos(2,:),pos(3,:), 'k', 'filled')
 %cleanup
 axis(ax,'vis3d');
 axis(ax,'equal');
-axis(ax,'off');
+%axis(ax,'off');
+grid on
 
 % draw incident wave (convert az/el to cartesian again)
 Z_INC  = arrRad.*cosd(theta_inc);
